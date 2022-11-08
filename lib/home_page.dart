@@ -6,9 +6,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title:const Text("NMIMS")),
       body: Center(
         child: Text("Hello Hardik $day"),
       ),
+      drawer: Drawer(),
     );
   }
 }
