@@ -23,25 +23,31 @@ class _HomePageState extends State<HomePage> {
     loadData();
   }
   loadData() async{
-    final catalogJson = await rootBundle.loadString("assets/files/catalog.json");
+    await Future.delayed(const Duration(seconds: 5));
+    final catalogJson =
+    await rootBundle.loadString("assets/files/catalog.json");
     final decodedData = jsonDecode(catalogJson);
     final productsData = decodedData["products"];
-    print(productsData);
+    CatalogModel.items = List.from(productsData).map<Item>((item) => Item.fromMap(item)).toList();
+    setState(() {});
     }
 
 
   Widget build(BuildContext context) {
-    final dummyList = List.generate(5, (index) => CatalogModel.items[0]);
+    // final dummyList = List.generate(5, (index) => CatalogModel.items[0]);
     return Scaffold(
       appBar: AppBar(title:const Text("NMIMS")),
-      body: ListView.builder(
-             itemCount: dummyList.length,
+      body:(CatalogModel.items != null && CatalogModel.items.isNotEmpty)?
+      ListView.builder(
+             itemCount: CatalogModel.items.length,
              itemBuilder: (BuildContext context, int index) {
                return ItemWidget(
-               item: dummyList[index],
+               item: CatalogModel.items[index],
                );
            },
-    ),
+    ):const Center(
+        child: CircularProgressIndicator(),
+      ),
       drawer: const MyDrawer(),
     );
   }
