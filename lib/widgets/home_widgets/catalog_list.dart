@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mess_menu/pages/home_detail_page.dart';
+import 'package:mess_menu/widgets/home_widgets/add_to_cart.dart';
 import 'package:mess_menu/widgets/home_widgets/catalog_image.dart';
-import 'package:mess_menu/widgets/themes.dart';
 import 'package:velocity_x/velocity_x.dart';
 import '../../models/catalog.dart';
 
@@ -50,19 +50,13 @@ class CatalogItem extends StatelessWidget {
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
                   "\$${catalog.price}".text.make(),
-                  ElevatedButton(
-                    onPressed: (){},
-                    child: "Add".text.make(),
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(MyTheme.darkBluishColor),
-                        shape: MaterialStateProperty.all(StadiumBorder())
-                    ),)
+                  AddToCart(catalog: catalog)
                 ],
               )
             ],
           ))
         ],
       ),
-    ).white.roundedLg.square(150).make().py8();
+    ).color(context.theme.cardColor).roundedLg.square(150).make().py8();
   }
 }

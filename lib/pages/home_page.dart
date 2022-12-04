@@ -7,7 +7,6 @@ import 'package:mess_menu/models/catalog.dart';
 import 'package:mess_menu/utils/routes.dart';
 import 'package:mess_menu/widgets/home_widgets/catalog_header.dart';
 import 'package:mess_menu/widgets/home_widgets/catalog_list.dart';
-import 'package:mess_menu/widgets/themes.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 
@@ -46,9 +45,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.pushNamed(context,MyRoutes.cartRoute),
-          backgroundColor: MyTheme.darkBluishColor,
-          child: const Icon(CupertinoIcons.cart)),
-      backgroundColor: MyTheme.creamColor,
+          backgroundColor: context.theme.buttonColor,
+          child: const Icon(CupertinoIcons.cart,color: Colors.white,)),
+      backgroundColor: context.canvasColor,
       body: SafeArea(
         child: Container(
           padding: Vx.m32,

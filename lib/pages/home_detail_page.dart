@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_menu/models/catalog.dart';
-import 'package:mess_menu/widgets/themes.dart';
+import 'package:mess_menu/widgets/home_widgets/add_to_cart.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeDetailPage extends StatelessWidget {
@@ -13,22 +13,16 @@ final Item catalog;
 
       appBar: AppBar(backgroundColor: Colors.transparent,),
       bottomNavigationBar: Container(
-        color: Colors.white,
+        color: context.theme.cardColor,
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceBetween,
           children: [
-            "\$${catalog.price}".text.xl3.make(),
-            ElevatedButton(
-              onPressed: (){},
-              child: "Buy".text.xl.make(),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(MyTheme.darkBluishColor),
-                  shape: MaterialStateProperty.all(StadiumBorder())
-              ),).wh(100, 50)
+            "\$${catalog.price}".text.color(Colors.red).xl3.make(),
+            AddToCart(catalog: catalog).wh(100, 50)
           ],
         ),
       ),
-      backgroundColor: MyTheme.creamColor,
+      backgroundColor: context.theme.canvasColor,
       body: SafeArea(
         bottom: false,
 
@@ -43,7 +37,7 @@ final Item catalog;
               child: SingleChildScrollView(
                 child: Container(
 
-                  color: Colors.white,
+                  color: context.theme.cardColor,
                   width: context.screenWidth,
                   child: Column(
                     children: [
