@@ -1,120 +1,263 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mess_menu/utils/routes.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  // const LoginPage({Key? key}) : super(key: key);
+  var togglecall;
+  LoginPage({this.togglecall});
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  String name="";
-  bool changeButton = false;
+TextEditingController username = TextEditingController();
+TextEditingController password = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
+Future login(BuildContext context) async{
 
-  moveToHome(BuildContext context) async {
-    if(_formKey.currentState!.validate()){
-    setState(() {changeButton = true;});
-    await Future.delayed(const Duration(seconds: 1));
-    await Navigator.pushNamed(context, MyRoutes.homeRoute);
-    setState(() {changeButton = false;});}
+  if(username.text == "" || password.text == ""){
+    Fluttertoast.showToast(msg: "Both Fields empty",toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER,fontSize: 16.0);
+  }
+  else{
+
+    var url = 'http://10.168.35.10/flutterApp/login.php';
+    var response = await http.post(Uri.parse(url),
+        body: {
+          "username" : username.text,
+          "password" : password.text,
+        });
+
+    var data =json.decode(response.body);
+    print(data);
+    if (data == username.text){
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
+    else{
+      Fluttertoast.showToast(msg: "User does not exist",toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER,fontSize: 16.0);
+    }
+
   }
 
-@override
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  String name = "";
+  bool changeButton = false;
+  bool value = true;
+  final _formKey = GlobalKey<FormState>();
+
+
+  @override
   Widget build(BuildContext context) {
+    bool value = false;
     return Material(
+      child: Column(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
-      color: context.theme.canvasColor,
-      child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Image.asset("assets/images/login_image.png"),
-              const SizedBox(
-                height: 20,
-              ),
-              Text("Welcome $name",
-                style:const TextStyle(fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0,horizontal: 32.0),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
 
-                  child: Column(
-                    children: [
-                      TextFormField(decoration: const InputDecoration(
-                        hintText: "Enter username",
-                        labelText: "Username",
-                      ),
-                        validator: (value) {
-                        if(value!.isEmpty){
-                          return "Username can't be empty.";
-                        }
-                        return null;
-                        },
-                        onChanged: (value){
-                        name=value;
-                        setState(() {});
-                        },
-                      ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            "Welcome".text.xl4.color(context.theme.buttonColor).fontWeight(FontWeight.bold).make(),
+                          ],
+                        ),
+                        "Admin".text.xl3.color(context.theme.buttonColor).fontWeight(FontWeight.w400).make(),
 
-                      TextFormField(decoration: const InputDecoration(
-                        hintText: "Enter password",
-                        labelText: "Password",
-                      ),
-                        obscureText: true,
-                        validator: (value){
-                        if(value==null && value!.isEmpty){
-                          return "Password can't be empty";
-                        }else
-                        if(value.length<6){
-                          return "Password length should be atleast 6.";
-                        }
-                        return null;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Material(
-                        color: context.theme.buttonColor,
-                        borderRadius: BorderRadius.circular(changeButton?40:10),
-                        child: InkWell(
-                          onTap: () => moveToHome(context),
-                          child: AnimatedContainer(
-                            duration: const Duration(seconds: 1),
-                            width:changeButton? 40 : 150,
-                            height: 40,
-                            alignment: Alignment.center,
-                            child:changeButton?const Icon(Icons.done , color: Colors.white,):const Text("Login",
-                              style: TextStyle(fontWeight: FontWeight.bold,
-                                fontSize: 20,color: Colors.white),
-                                ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
 
+                        TextFormField(
+                          controller: username,
+                          decoration: const InputDecoration(
+                              labelText:  "Username",
+                              hintText: "Enter Username"
+                          ),
+                          validator: (value){
+                            if(value!.isEmpty || value==null){
+                              return "Empty field not allowed";
+                            }
+                            return null;
+                          },
+                          // onChanged: (value){
+                          //   name = value;
+                          //   setState(() {});
+                          // },
+                        ),
+
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+
+                        TextFormField(
+                          controller: password,
+                          decoration: const InputDecoration(
+                            labelText: "Password",
+                            hintText: "Enter Password",
+                          ),
+                          obscureText: true,
+                          validator: (value){
+                            if(value!.isEmpty || value==null){
+                              return "Empty field not allowed";
+                            }else if(value.length <5){
+                              return "length should be more than 5";
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 8.0,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Checkbox(
+                                activeColor: Color(0xff00C8E8),
+                                value: value,
+                                onChanged: (bool? value) {  },
+                              ),
+                              "Remembe Me".text.make(),
+                            ],
                           ),
                         ),
-                      )
-                      // ElevatedButton(
-                      //     onPressed: () {
-                      //       Navigator.pushNamed(context, MyRoutes.homeRoute);
-                      //     },
-                      //     style: TextButton.styleFrom(minimumSize: Size(150, 40)),
-                      //     child: const Text("Login"))
-                    ],
+                        const SizedBox(height: 20.0,),
+
+                        Center(
+
+                          child: Material(
+                            color: context.theme.buttonColor,
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: InkWell(
+                              onTap: () => login(context),
+                              child: AnimatedContainer(
+                                width: 150,
+                                height: 40,
+                                alignment: Alignment.center,
+                                duration: const Duration(seconds: 1),
+                                child: "Login".text.xl2.color(context.theme.canvasColor).fontWeight(FontWeight.w500).make(),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Material(
+                              child: InkWell(
+                                onTap: (){},
+                                child: Container(child: Text("Forgot password?",style: TextStyle(fontSize: 13, decoration: TextDecoration.underline),),),
+                              ),
+                            )
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: () => showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('AlertDialog Title'),
+                                    content: const Text('AlertDialog description'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'OK'),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                child: "Contact us".text.color(context.theme.buttonColor).make().p0(),
+                              ),
+                              "|".text.color(context.theme.buttonColor).make(),
+                              TextButton(
+                                onPressed: () => showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('AlertDialog Title'),
+                                    content: const Text('AlertDialog description'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'OK'),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                child: "Request".text.color(context.theme.buttonColor).make().p0(),
+                              ),
+
+                              "|".text.color(context.theme.buttonColor).make(),
+
+                              TextButton(
+                                onPressed: () => showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('AlertDialog Title'),
+                                    content: const Text('AlertDialog description'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, 'OK'),
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                child: "Report Issue".text.color(context.theme.buttonColor).make().p0(),
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-            ],
+              ),
+            ),
           ),
-        ),
-      )
+        ],
+      ),
     );
   }
 }

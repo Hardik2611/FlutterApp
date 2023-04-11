@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_menu/models/catalog.dart';
@@ -5,9 +7,11 @@ import 'package:mess_menu/widgets/home_widgets/add_to_cart.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeDetailPage extends StatelessWidget {
-  const HomeDetailPage({Key? key, required this.catalog}) : super(key: key);
+  HomeDetailPage({Key? key, required this.catalog}) : super(key: key);
 final Item catalog;
   @override
+
+
   Widget build(BuildContext context) {
     return Scaffold(
 
@@ -17,7 +21,7 @@ final Item catalog;
         child: ButtonBar(
           alignment: MainAxisAlignment.spaceBetween,
           children: [
-            "\$${catalog.price}".text.color(Colors.red).xl3.make(),
+            "\u20B9${catalog.price}".text.color(Colors.red).xl3.make(),
             AddToCart(catalog: catalog).wh(100, 50)
           ],
         ),
